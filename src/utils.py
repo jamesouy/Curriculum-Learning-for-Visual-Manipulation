@@ -14,6 +14,7 @@ from .envs_gymapi import LowDimensionalObsGymEnv, LowDimensionalObsGymGoalEnv, A
 from .networks import CustomCNN, CustomCombinedPatchExtractor
 from .her_replay_buffer_modified import HerReplayBufferModified
 
+import multiprocessing
 
 def obs_to_video(images: list, filename: str):
     """
@@ -80,6 +81,7 @@ def setup_envs(
         while True:
             try:
                 env = SubprocVecEnv(envs, start_method=args.multiprocessing_start_method)
+                print(f"processes: {len(multiprocessing.active_children())}")
                 return env
             except OSError as e:
                 print(f"Got error while creating envs, trying again: {e}")
