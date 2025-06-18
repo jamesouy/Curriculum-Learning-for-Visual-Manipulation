@@ -41,7 +41,7 @@ class Args(WandbArgs, AlgArgs, EnvArgs):
 
     curriculum_file: str = tyro.MISSING
     """The path to a python file containing functions that generate BDDL files"""
-    ignore_tasks: list[str] = []
+    ignore_tasks: List[str] = []
     """A list of task names(function names) to ignore when reading the curriculum file"""
     success_rate_threshold: float = 0.7
     """success rate to reach before moving on to the next subtask of the curriculum"""
@@ -49,7 +49,7 @@ class Args(WandbArgs, AlgArgs, EnvArgs):
     """The number of timesteps to run the final task. If not set, will equal total_timesteps"""
 
 
-def load_bddls(curriculum_file: str, ignore_tasks: list[str] = []):
+def load_bddls(curriculum_file: str, ignore_tasks: List[str] = []):
     assert curriculum_file is not None
     assert os.path.exists(curriculum_file)
     with open(curriculum_file, 'r') as f:
