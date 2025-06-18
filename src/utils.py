@@ -15,6 +15,7 @@ from .networks import CustomCNN, CustomCombinedPatchExtractor
 from .her_replay_buffer_modified import HerReplayBufferModified
 
 import multiprocessing
+create_env_err_count = 0
 
 def obs_to_video(images: list, filename: str):
     """
@@ -81,11 +82,13 @@ def setup_envs(
         while True:
             try:
                 env = SubprocVecEnv(envs, start_method=args.multiprocessing_start_method)
-                print(f"processes: {len(multiprocessing.active_children())}")
+                create_env_err_count = 0
                 return env
             except OSError as e:
-                print(f"Got error while creating envs, trying again: {e}")
-                time.sleep(1)
+                create_env_err_count += 1
+                print(f"Got error while creating envs, trying again in {create_env_err_count}s: {e}")
+                print(f"processes: {len(multiprocessing.active_children())}")
+                time.sleep(create_env_err_count)
                 
     else:
         return DummyVecEnv(envs)
