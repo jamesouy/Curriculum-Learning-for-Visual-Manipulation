@@ -71,14 +71,17 @@ def load_bddls(curriculum_file: str, ignore_until: str = "", ignore_tasks: List[
         if k in ignore_tasks: 
             print(f"skipping {k} in ignore_tasks")
             continue
-        if ignore_until != "" and ignore_until.startswith(k):
-            print(f"skipping {bddl_name} until ignore_until")
+        if ignore_until != "" and not ignore_until.startswith(k):
+            print(f"skipping {k} until ignore_until")
             continue
         if len(inspect.signature(func).parameters) == 0:
             bddl = func()
             if type(bddl) is str:
-                bddls.append((func.__name__, bddl))
-                print(f"Added single task '{func.__name__}'")
+                bddl_name = func.__name__
+                if bddl_name == ignore_until:
+                    ignore_until = ""
+                bddls.append((bddl_name, bddl))
+                print(f"Added single task '{bddl_name}'")
             elif type(bddl) is list:
                 count = 0
                 for i, s in enumerate(bddl):
