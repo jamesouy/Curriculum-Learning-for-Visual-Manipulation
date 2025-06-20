@@ -71,7 +71,7 @@ def load_bddls(curriculum_file: str, ignore_until: str = "", ignore_tasks: List[
         if k in ignore_tasks: 
             print(f"skipping {k} in ignore_tasks")
             continue
-        if ignore_until != "" and k.startswith(ignore_until):
+        if ignore_until != "" and ignore_until.startswith(k):
             print(f"skipping {bddl_name} until ignore_until")
             continue
         if len(inspect.signature(func).parameters) == 0:
