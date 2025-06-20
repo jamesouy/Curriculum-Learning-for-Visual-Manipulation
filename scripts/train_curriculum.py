@@ -77,6 +77,7 @@ def load_bddls(curriculum_file: str, ignore_until: str = "", ignore_tasks: List[
                 bddls.append((func.__name__, bddl))
                 print(f"Added single task '{func.__name__}'")
             elif type(bddl) is list:
+                count = 0
                 for i, s in enumerate(bddl):
                     assert type(s) is str
                     bddl_name = f"{func.__name__}_{i}"
@@ -87,7 +88,8 @@ def load_bddls(curriculum_file: str, ignore_until: str = "", ignore_tasks: List[
                         else:
                             ignore_until = ""
                     bddls.append((f"{func.__name__}_{i}", s))
-                print(f"Added task space '{func.__name__}' with {len(bddl)} steps")
+                    count += 1
+                print(f"Added task space '{func.__name__}' with {count} steps")
     # for k, bddl in bddls:
     #     print(k)
     #     print(bddl)
@@ -112,7 +114,7 @@ if __name__ == "__main__":
 
 
     print("Loading bddls")
-    bddls = load_bddls(args.curriculum_file, [t.strip() for t in args.ignore_tasks.split(',')])
+    bddls = load_bddls(args.curriculum_file, args.ignore_until, [t.strip() for t in args.ignore_tasks.split(',')])
     assert len(bddls) > 0
 
 
