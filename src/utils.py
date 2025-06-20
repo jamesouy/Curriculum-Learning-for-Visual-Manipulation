@@ -80,6 +80,7 @@ def setup_envs(
     
     if args.num_envs > 1:
         while True:
+            global create_env_err_count
             try:
                 env = SubprocVecEnv(envs, start_method=args.multiprocessing_start_method)
                 create_env_err_count = 0

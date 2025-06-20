@@ -43,13 +43,15 @@ class Args(WandbArgs, AlgArgs, EnvArgs):
     """The path to a python file containing functions that generate BDDL files"""
     ignore_tasks: str = ""
     """Comma separated list of task names(function names) to ignore when reading the curriculum file"""
+    ignore_until: str = ""
+    """Skip all tasks until reaching a task with this name (includes the number)"""
     success_rate_threshold: float = 0.7
     """success rate to reach before moving on to the next subtask of the curriculum"""
     final_task_timesteps: Optional[int] = None
     """The number of timesteps to run the final task. If not set, will equal total_timesteps"""
 
 
-def load_bddls(curriculum_file: str, ignore_tasks: List[str] = []):
+def load_bddls(curriculum_file: str, ignore_until: str = "", ignore_tasks: List[str] = []):
     assert curriculum_file is not None
     assert os.path.exists(curriculum_file)
     with open(curriculum_file, 'r') as f:
@@ -66,7 +68,8 @@ def load_bddls(curriculum_file: str, ignore_tasks: List[str] = []):
         if k.startswith("__") and k.endswith("__"): # ignore functions named __name__
             # print(f"skipping {k} because it is in the format __name__")
             continue
-        if k in ignore_tasks: # ignore the passed-in ignored tasks
+        if k in ignore_tasks: 
+            print(f"skipping {k} in ignore_tasks")
             continue
         if len(inspect.signature(func).parameters) == 0:
             bddl = func()
@@ -76,6 +79,13 @@ def load_bddls(curriculum_file: str, ignore_tasks: List[str] = []):
             elif type(bddl) is list:
                 for i, s in enumerate(bddl):
                     assert type(s) is str
+                    bddl_name = f"{func.__name__}_{i}"
+                    if ignore_until != "": # ignore until this if we're skipping tasks
+                        if bddl_name != ignore_until: 
+                            print(f"skipping {bddl_name} until ignore_until")
+                            continue
+                        else:
+                            ignore_until = ""
                     bddls.append((f"{func.__name__}_{i}", s))
                 print(f"Added task space '{func.__name__}' with {len(bddl)} steps")
     # for k, bddl in bddls:
