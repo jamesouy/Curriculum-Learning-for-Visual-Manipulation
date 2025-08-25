@@ -178,6 +178,7 @@ if __name__ == "__main__":
 
 
     envs.close()
+    del envs
     print("Start training")
     for i, (subtask_name, bddl) in enumerate(bddls):
         print(f"Starting subtask {i+1}/{len(bddls)} ({subtask_name}) at step {model.num_timesteps}")
@@ -234,5 +235,6 @@ if __name__ == "__main__":
             wandb.save(os.path.join(models_path, f"{i}_{subtask_name}.zip"), base_path=save_path, policy='now')
 
         envs.close()
+        del envs
 
     del model
