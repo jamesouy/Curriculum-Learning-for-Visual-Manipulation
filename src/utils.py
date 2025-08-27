@@ -92,7 +92,6 @@ def setup_envs(
             try:
                 env = SubprocVecEnv(envs, start_method=args.multiprocessing_start_method)
                 create_env_err_count = 0
-                print("Open files:", get_open_files_count())
                 return env
             except OSError as e:
                 create_env_err_count += 1

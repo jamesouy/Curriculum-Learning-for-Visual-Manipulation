@@ -186,6 +186,7 @@ if __name__ == "__main__":
         is_final_task = i == len(bddls)-1
 
         envs = create_envs(bddl, args, tmp_dir=tmp_path)
+        print("Open files after create_envs:", get_open_files_count())
         if args.seed is not None:
             envs.seed(args.seed)
         model.set_env(envs)
@@ -227,6 +228,7 @@ if __name__ == "__main__":
             reset_num_timesteps=False,
             progress_bar=False
         )
+        print("Open files after learn:", get_open_files_count())
 
 
         if args.wandb: # save tensorboard files to wandb
@@ -235,7 +237,9 @@ if __name__ == "__main__":
         if args.wandb: # save models to wandb
             wandb.save(os.path.join(models_path, f"{i}_{subtask_name}.zip"), base_path=save_path, policy='now')
 
+        print("Open files before close:", get_open_files_count())
         envs.close()
         del envs
+        print("Open files after close:", get_open_files_count())
 
     del model
