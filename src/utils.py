@@ -90,7 +90,9 @@ def setup_envs(
         while True:
             global create_env_err_count
             try:
+                print("Open files before SubprocVecEnv:", get_open_files_count())
                 env = SubprocVecEnv(envs, start_method=args.multiprocessing_start_method)
+                print("Open files after SubprocVecEnv:", get_open_files_count())
                 create_env_err_count = 0
                 return env
             except OSError as e:
@@ -100,7 +102,10 @@ def setup_envs(
                 time.sleep(create_env_err_count)
                 
     else:
-        return DummyVecEnv(envs)
+        print("Open files before DummyVecEnv:", get_open_files_count())
+        env = DummyVecEnv(envs)
+        print("Open files after DummyVecEnv:", get_open_files_count())
+        return env
 
 
 def setup_run_at_path(base_path: str, *paths: str):

@@ -14,6 +14,7 @@ import torch
 import numpy as np
 from typing import List, Tuple, Optional
 import copy
+import gc
 
 from stable_baselines3.common.callbacks import CheckpointCallback
 
@@ -240,6 +241,7 @@ if __name__ == "__main__":
         print("Open files before close:", get_open_files_count())
         envs.close()
         del envs
+        gc.collect()
         print("Open files after close:", get_open_files_count())
 
     del model
