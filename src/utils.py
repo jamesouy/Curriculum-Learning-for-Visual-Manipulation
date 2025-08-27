@@ -14,6 +14,7 @@ from .envs_gymapi import LowDimensionalObsGymEnv, LowDimensionalObsGymGoalEnv, A
 from .networks import CustomCNN, CustomCombinedPatchExtractor
 from .her_replay_buffer_modified import HerReplayBufferModified
 
+import subprocess
 import multiprocessing
 create_env_err_count = 0
 
@@ -35,6 +36,13 @@ def obs_to_video(images: list, filename: str):
             </script>    
     """)
 
+def get_open_files_count():
+    output = subprocess.check_output(['lsof', '-w', '-Ff', '-p', str(os.getpid())])
+    num_fds = 0
+    for line in output.decode().split('\n'):
+        if line.startswith('f') and line[1:].isdigit():
+            num_fds += 1
+    return num_fds
 
 class EnvAndAlgArgs(args.EnvArgs, args.AlgArgs):
     pass
@@ -84,6 +92,7 @@ def setup_envs(
             try:
                 env = SubprocVecEnv(envs, start_method=args.multiprocessing_start_method)
                 create_env_err_count = 0
+                print("Open files:", get_open_files_count())
                 return env
             except OSError as e:
                 create_env_err_count += 1

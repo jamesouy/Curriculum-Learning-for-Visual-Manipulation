@@ -18,7 +18,7 @@ import copy
 from stable_baselines3.common.callbacks import CheckpointCallback
 
 from src.callbacks import VideoWriter, StopTrainingOnSuccessRateThreshold
-from src.utils import setup_envs, setup_run_at_path, setup_model
+from src.utils import setup_envs, setup_run_at_path, setup_model, get_open_files_count
 from src.args import WandbArgs, AlgArgs, EnvArgs
 
 import inspect
@@ -182,6 +182,7 @@ if __name__ == "__main__":
     print("Start training")
     for i, (subtask_name, bddl) in enumerate(bddls):
         print(f"Starting subtask {i+1}/{len(bddls)} ({subtask_name}) at step {model.num_timesteps}")
+        print("Open files before subtask:", get_open_files_count())
         is_final_task = i == len(bddls)-1
 
         envs = create_envs(bddl, args, tmp_dir=tmp_path)
